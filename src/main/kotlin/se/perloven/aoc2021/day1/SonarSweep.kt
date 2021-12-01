@@ -5,14 +5,22 @@ import java.io.File
 private const val INPUT_FILENAME = "day1/sonarsweep-input.txt"
 
 fun main() {
-    val increases = SonarSweep().getMeasurementIncreases(INPUT_FILENAME)
-    println("Number of depth measurement increases: $increases")
+    val sonarSweep = SonarSweep()
+    val singleIncreases = sonarSweep.getSingleMeasurementIncreases(INPUT_FILENAME)
+    val tripleSumIncreases = sonarSweep.getTripleSumIncreases(INPUT_FILENAME)
+    println("Number of depth measurement increases: $singleIncreases")
+    println("Number of triple sum measurement increases: $tripleSumIncreases")
 }
 
 class SonarSweep {
-    fun getMeasurementIncreases(fileName: String): Int {
+    fun getSingleMeasurementIncreases(fileName: String): Int {
         val measurements = getResourceFile(fileName).getIntLines()
-        return calculateIncreases(measurements)
+        return calculateSingleIncreases(measurements)
+    }
+
+    fun getTripleSumIncreases(fileName: String): Int {
+        val measurements = getResourceFile(fileName).getIntLines()
+        return calculateTripleSumIncreases(measurements)
     }
 
     private fun getResourceFile(fileName: String): File {
@@ -25,7 +33,7 @@ class SonarSweep {
             .toList()
     }
 
-    private fun calculateIncreases(values: List<Int>): Int {
+    private fun calculateSingleIncreases(values: List<Int>): Int {
         var increases = 0
         var prev: Int? = null
         for (cur in values) {
@@ -36,5 +44,9 @@ class SonarSweep {
         }
 
         return increases
+    }
+
+    private fun calculateTripleSumIncreases(values: List<Int>): Int {
+        return values.windowed(3, 1).map { it.sum() }.windowed(2, 1).count { it[1] > it[0] } // thanks Ravi
     }
 }
